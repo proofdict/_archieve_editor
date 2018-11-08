@@ -9,7 +9,10 @@ import { appLocator } from "./AppLocator";
 import { createCreateNewDictionaryUseCase } from "./use-case/dictionary/CreateNewDictionaryUseCase";
 import { parseQuery } from "./infra/url/QueryParser";
 import { createInitializeUseCase } from "./use-case/initialization/InitializeUseCase";
+import { initializeIcons } from "@uifabric/icons";
 
+// Register icons and pull the fonts from the default SharePoint cdn:
+initializeIcons();
 require("./index.css");
 require("office-ui-fabric-react/dist/css/fabric.min.css");
 
@@ -36,13 +39,11 @@ context
         const query = parseQuery<{ owner: string; repo: string; branch: string; proofdictRelativePath: string }>(
             location.href
         );
-        await transactionContext.useCase(createInitializeUseCase()).executor(useCase =>
-            useCase.execute({
-                owner: query.owner,
-                repo: query.repo
-            })
-        );
-        await transactionContext.useCase(createCreateNewDictionaryUseCase()).executor(useCase => useCase.execute());
+        await transactionContext.useCase(createInitializeUseCase()).execute({
+            owner: query.owner,
+            repo: query.repo
+        });
+        await transactionContext.useCase(createCreateNewDictionaryUseCase()).execute();
         transactionContext.commit();
     })
     .then(() => {

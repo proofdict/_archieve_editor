@@ -19,16 +19,18 @@ export class DictTesterContainer extends BaseContainer<
 > {
     createTestPatterns = () => {
         return this.props.dictTester.inputs.map((input, index) => {
-            const onChangeTestPattern = (newValue: string) => {
-                this.useCase(createUpdateDictionarySpecUseCase()).executor(useCase =>
-                    useCase.execute(this.props.dictForm.dictionaryId, input, newValue)
+            const onChangeTestPattern = (event: any, newValue?: string) => {
+                this.useCase(createUpdateDictionarySpecUseCase()).execute(
+                    this.props.dictForm.dictionaryId,
+                    input,
+                    newValue
                 );
             };
             const result = this.props.dictTester.hasOutput(index) ? this.props.dictTester.getOutput(index) : "No data";
             return (
                 <Grid key={index} className="DictTesterContainer-inputOutputGrid">
                     <GridCell col="6of12" className="DictTesterContainer-inputCell">
-                        <TextField placeholder="Any test string" value={input} onChanged={onChangeTestPattern} />
+                        <TextField placeholder="Any test string" value={input} onChange={onChangeTestPattern} />
                     </GridCell>
                     <GridCell col="6of12" className="DictTesterContainer-outputCell">
                         <p className="DictTesterContainer-expected">{result}</p>
@@ -39,9 +41,7 @@ export class DictTesterContainer extends BaseContainer<
     };
 
     private onClickAddNewPattern = () => {
-        this.useCase(createAddNewSpecToDictionaryUseCase()).executor(useCase =>
-            useCase.execute(this.props.dictForm.dictionaryId)
-        );
+        this.useCase(createAddNewSpecToDictionaryUseCase()).execute(this.props.dictForm.dictionaryId);
     };
 
     render() {

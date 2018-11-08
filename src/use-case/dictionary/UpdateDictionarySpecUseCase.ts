@@ -16,7 +16,10 @@ export class UpdateDictionarySpecUseCase extends UseCase {
         super();
     }
 
-    execute(id: DictionaryIdentifier, oldSpecActual: string, newSpecActual: string) {
+    execute(id: DictionaryIdentifier, oldSpecActual: string, newSpecActual?: string) {
+        if (newSpecActual === undefined) {
+            return;
+        }
         const dictionary = this.repo.dictionaryRepository.findById(id);
         if (!dictionary) {
             throw new Error(`Not found dictionary:${id}`);
@@ -32,8 +35,6 @@ export class UpdateDictionarySpecUseCase extends UseCase {
             })
         );
         this.repo.dictionaryRepository.save(newDictionary);
-        return this.context
-            .useCase(createUpdateDictionarySpecStatusUseCase())
-            .executor(useCase => useCase.execute(newDictionary.id));
+        return this.context.useCase(createUpdateDictionarySpecStatusUseCase()).execute(newDictionary.id);
     }
 }
